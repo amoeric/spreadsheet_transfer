@@ -3,6 +3,7 @@
 require_relative "lib/spreadsheet_transfer/version"
 
 Gem::Specification.new do |spec|
+  spec.add_dependency 'google_drive'
   spec.name          = "spreadsheet_transfer"
   spec.version       = SpreadsheetTransfer::VERSION
   spec.authors       = ["Eric Syu"]

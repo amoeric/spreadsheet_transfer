@@ -1,43 +1,66 @@
 # SpreadsheetTransfer
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/spreadsheet_transfer`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'spreadsheet_transfer'
+gem 'spreadsheet_transfer', git: 'https://github.com/amoeric/spreadsheet_transfer.git'
 ```
 
 And then execute:
 
     $ bundle install
 
-Or install it yourself as:
-
-    $ gem install spreadsheet_transfer
 
 ## Usage
 
-TODO: Write usage instructions here
+### 1. 設定 service_account.json
 
-## Development
+所申請的 google spreadsheet api json 檔
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+### 2. 設定 spread_sheet.yml
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+#### 資料架構
+```
+company:
+  filename: 'company_base'
+  first_key_x: 1
+  first_key_y: 2
+  data_order: 'row'
+```
+#### 架構說明
+company：  分頁名稱
+filename： 產出的檔案名稱
+first_key_x、first_key_y： 第一個 key 的 x、y 位置
 
-## Contributing
+```
+# 如果在 A2
+  first_key_x: 1
+  first_key_y: 2
+```
+data_order: 每筆資料排序，分為 ``'col'`` 或 `'row'`
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/spreadsheet_transfer. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/[USERNAME]/spreadsheet_transfer/blob/master/CODE_OF_CONDUCT.md).
+### 3. 建立 spreadsheet_transfer.rb 
 
-## License
 
-The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+```ruby
+#config/initializers/spreadsheet_transfer.rb
 
-## Code of Conduct
+SpreadsheetTransfer::Base.configure do |c|
+  c.export_data_dir = Rails.root.join('data')
+  c.conf_file = Rails.root.join('secrets/service_account.json')
+  c.data_map_file = Rails.root.join('spread_sheet.yml')
+  c.spreadsheet_id = '1fHANc0l4ndQsdadasW5sBsteeI8'
+end
+```
 
-Everyone interacting in the SpreadsheetTransfer project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/[USERNAME]/spreadsheet_transfer/blob/master/CODE_OF_CONDUCT.md).
+### 4. 使用方式
+```ruby
+# rails console
+# 轉換所有
+SpreadsheetTransfer::Csv.parse_all
+# 特定分頁，company 為分頁名稱
+SpreadsheetTransfer::Csv.new('company').parse
+```
