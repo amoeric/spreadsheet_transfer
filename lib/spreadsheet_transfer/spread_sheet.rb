@@ -3,6 +3,8 @@
 require 'google_drive'
 require 'spreadsheet_transfer/row_sheet'
 require 'spreadsheet_transfer/column_sheet'
+require 'spreadsheet_transfer/exporter/csv'
+require 'spreadsheet_transfer/exporter/json'
 
 module SpreadsheetTransfer
   class SpreadSheet
@@ -23,10 +25,6 @@ module SpreadsheetTransfer
       @sheets ||= @spreadsheet.worksheets
     end
 
-    def perform
-      pp sheets
-    end
-
     def data
       sheets.map do |s|
         next unless datamap.keys.include?(s.title)
@@ -39,6 +37,30 @@ module SpreadsheetTransfer
 	    SpreadsheetTransfer::ColumnSheet.new(s, datamap[s.title]).items
         }
       end.compact
+    end
+
+    def export_all_to_csv
+      sheets.each do |s|
+        next unless datamap.keys.include?(s.title)
+
+	data = datamap[s.title]['data_order'] == 'row' ?
+	       SpreadsheetTransfer::RowSheet.new(s, datamap[s.title]) :
+	       SpreadsheetTransfer::ColumnSheet.new(s, datamap[s.title])
+
+	SpreadsheetTransfer::Exporter::CSV.new("#{datamap[s.title]['filename']}.csv", data, datamap[s.title]['export_dir']).export!
+      end
+    end
+
+    def export_all_to_json
+      sheets.each do |s|
+        next unless datamap.keys.include?(s.title)
+
+	data = datamap[s.title]['data_order'] == 'row' ?
+	       SpreadsheetTransfer::RowSheet.new(s, datamap[s.title]) :
+	       SpreadsheetTransfer::ColumnSheet.new(s, datamap[s.title])
+
+	SpreadsheetTransfer::Exporter::JSON.new("#{datamap[s.title]['filename']}.json", data, datamap[s.title]['export_dir']).export!
+      end
     end
 
     private
