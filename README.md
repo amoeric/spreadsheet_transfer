@@ -109,42 +109,27 @@ spreadsheet.data
 
 spreadsheet.sheets
 => [
-#<GoogleDrive::Worksheet spreadsheet_id="12234235454WSA8Bqweqe122", gid="7578", title="company">,
-#<GoogleDrive::Worksheet spreadsheet_id="12234235454WSA8Bqweqe122", gid="0", title="col_company">
-]
-
-
-sheet = spreadsheet.sheets.find {|s| s.title == 'col_company'}
-SpreadsheetTransfer::ColumnSheet.new(sheet, spreadsheet.datamap[sheet.title]).name
-=> 'col_company'
-SpreadsheetTransfer::ColumnSheet.new(sheet, spreadsheet.datamap[sheet.title]).keys
-=> ["id", "item_id", "name"]
-SpreadsheetTransfer::ColumnSheet.new(sheet, spreadsheet.datamap[sheet.title]).rows
-=> [["1", "1", "car"], ["2", "1", "bicycle"]]
-SpreadsheetTransfer::ColumnSheet.new(sheet, spreadsheet.datamap[sheet.title]).items
-=> [
-{"id"=>"1", "item_id"=>"1", "name"=>"car"},
-{"id"=>"2", "item_id"=>"1", "name"=>"bicycle"}
+#<SpreadsheetTransfer::RowSheet:0x00007ff2ac5836e8 @worksheet=#<GoogleDrive::Worksheet spreadsheet_id="12234235454WSA8Bqweqe122", gid="1234556", title="company">, @datamap={"filename"=>"company", "first_key_x"=>1, "first_key_y"=>2, "data_order"=>"row", "export_dir"=>"spreadsheet_data"}>,
+#<SpreadsheetTransfer::ColumnSheet:0x00007ff2ac5836e8 @worksheet=#<GoogleDrive::Worksheet spreadsheet_id="12234235454WSA8Bqweqe122", gid="1234556", title="col_company">, @datamap={"filename"=>"company", "first_key_x"=>1, "first_key_y"=>2, "data_order"=>"row", "export_dir"=>"spreadsheet_data"}>
 ]
 
 
 sheet = spreadsheet.sheets.find {|s| s.title == 'company'}
-SpreadsheetTransfer::RowSheet.new(sheet, spreadsheet.datamap[sheet.title]).name
+sheet.name
 => 'company'
-SpreadsheetTransfer::RowSheet.new(sheet, spreadsheet.datamap[sheet.title]).keys
+sheet.keys
 => ["id", "name", "country"]
-SpreadsheetTransfer::RowSheet.new(sheet, spreadsheet.datamap[sheet.title]).rows
+sheet.rows
 => [["1", "apple", "usa"], ["2", "samsung", "korea"]]
-SpreadsheetTransfer::RowSheet.new(sheet, spreadsheet.datamap[sheet.title]).items
+sheet.items
 => [
 {"id"=>"1", "name"=>"apple", "country"=>"usa"},
 {"id"=>"2", "name"=>"samsung", "country"=>"korea"}
 ]
 
 ## 匯出檔案
-data = SpreadsheetTransfer::ColumnSheet.new(sheet, spreadsheet.datamap[sheet.title])
-SpreadsheetTransfer::Exporter::CSV.new('info.csv', data, 'path').export!
-SpreadsheetTransfer::Exporter::JSON.new('info.json', data, 'path').export!
+SpreadsheetTransfer::Exporter::CSV.new('info.csv', sheet, 'path').export!
+SpreadsheetTransfer::Exporter::JSON.new('info.json', sheet, 'path').export!
 
 ## 匯出所有 `datamap.yml` 設定的檔案
 spreadsheet.export_all_to_json
