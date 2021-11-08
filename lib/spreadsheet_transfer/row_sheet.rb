@@ -7,7 +7,7 @@ module SpreadsheetTransfer
       @datamap = datamap
     end
 
-    def name
+    def title
       @worksheet.title
     end
 

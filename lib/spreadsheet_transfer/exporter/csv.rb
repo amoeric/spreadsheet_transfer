@@ -7,6 +7,8 @@ module SpreadsheetTransfer
   module Exporter
     class CSV < Base
       def export!
+        p 'dir'
+        p @dir
         ::CSV.open("#{@dir}/#{@filename}", 'w') do |csv|
           csv << @sheet.keys
           @sheet.rows.each { |row| csv << row }

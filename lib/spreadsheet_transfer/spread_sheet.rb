@@ -17,49 +17,39 @@ module SpreadsheetTransfer
       @spreadsheet = session.spreadsheet_by_key(spreadsheet_id)
     end
 
-    def name
-      @name ||= @spreadsheet.title
+    def title
+      @title ||= @spreadsheet.title
     end
 
     def sheets
-      @sheets ||= @spreadsheet.worksheets
+      @sheets ||= 
+        @spreadsheet.worksheets.map do |s|
+          next unless datamap.keys.include?(s.title)
+
+          datamap[s.title]['data_order'] == 'row' ? 
+	          SpreadsheetTransfer::RowSheet.new(s, datamap[s.title]) :
+	          SpreadsheetTransfer::ColumnSheet.new(s, datamap[s.title])
+        end.compact
     end
 
     def data
       sheets.map do |s|
-        next unless datamap.keys.include?(s.title)
-
-	{
-	  worksheet: s.title,
-	  items: 
-	    datamap[s.title]['data_order'] == 'row' ? 
-	    SpreadsheetTransfer::RowSheet.new(s, datamap[s.title]).items :
-	    SpreadsheetTransfer::ColumnSheet.new(s, datamap[s.title]).items
+	      {
+	        worksheet: s.title,
+	        items: s.items
         }
       end.compact
     end
 
     def export_all_to_csv
       sheets.each do |s|
-        next unless datamap.keys.include?(s.title)
-
-	data = datamap[s.title]['data_order'] == 'row' ?
-	       SpreadsheetTransfer::RowSheet.new(s, datamap[s.title]) :
-	       SpreadsheetTransfer::ColumnSheet.new(s, datamap[s.title])
-
-	SpreadsheetTransfer::Exporter::CSV.new("#{datamap[s.title]['filename']}.csv", data, datamap[s.title]['export_dir']).export!
+        SpreadsheetTransfer::Exporter::CSV.new("#{datamap[s.title]['filename']}.csv", s, datamap[s.title]['export_dir']).export!
       end
     end
 
     def export_all_to_json
       sheets.each do |s|
-        next unless datamap.keys.include?(s.title)
-
-	data = datamap[s.title]['data_order'] == 'row' ?
-	       SpreadsheetTransfer::RowSheet.new(s, datamap[s.title]) :
-	       SpreadsheetTransfer::ColumnSheet.new(s, datamap[s.title])
-
-	SpreadsheetTransfer::Exporter::JSON.new("#{datamap[s.title]['filename']}.json", data, datamap[s.title]['export_dir']).export!
+	      SpreadsheetTransfer::Exporter::JSON.new("#{datamap[s.title]['filename']}.json", s, datamap[s.title]['export_dir']).export!
       end
     end
 
