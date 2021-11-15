@@ -3,7 +3,9 @@
 module SpreadsheetTransfer
   class ColumnSheet < RowSheet
     def keys
-      raw_rows[@datamap['first_key_x']-1]
+      return raw_rows[@datamap['first_key_x']-1] unless has_replace_keys?
+
+      raw_rows[@datamap['first_key_x']-1].each { |kk| replace_keys.each { |k, v| kk.gsub!(k, v) } }
     end
 
     def rows
