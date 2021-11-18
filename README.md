@@ -91,7 +91,7 @@ ex: A2 cell
 
 
 data_order: 每筆資料排序，分為 ``'col'`` 或 `'row'`  
-export_dir： 匯出路徑
+export_dir： 匯出路徑  
 replace_keys: 修改 key， EX: company_country: 'country'， 會將 sheet 中的 `company_country` key 改成 `country`
 
 ### 3. 使用方式
