@@ -14,48 +14,51 @@ And then execute:
     $ bundle install
 
 
-## 試算表格式
+
+## (O) 支援格式
 
 
-(O) 所支援格式
-
-```
-#row
-|流水號|姓名|地址|
-|id|name|address|
-|1|eric|taiwan|
-
-or
-
-|id|name|address|
-|1|eric|taiwan|
-
-#col
-|流水號|id|1|
-|姓名|name|eric|
-|地址|address|taiwan|
+#### row
+|流水號|姓名|地址|  
+| ------------- | ------------- | ------------- |  
+|id|name|address|  
+|1|eric|taiwan|  
 
 or
 
-|id|1|
-|name|eric|
-|address|taiwan|
-```
+|id|name|address|  
+| ------------- | ------------- | ------------- |  
+|1|eric|taiwan|  
 
-(Ｘ) 並不會過濾無意義欄位
+#### col
+|流水號|id|1|  
+| ------------- | ------------- | ------------- |  
+|姓名|name|eric|  
+|地址|address|taiwan|  
 
-```
-# 欄位中的排序號
+or
+
+|id|1|  
+| ------------- | ------------- |  
+|name|eric|  
+|address|taiwan|  
+
+
+## (Ｘ) 不支援  
+
+欄位中的排序號  
 |id|1|name|address|
+| ------------- | ------------- | ------------- | ------------- |  
 |1 |2|eric|taiwan|
 
-#下方註解
+資料下方註解  
 |id   |name |address|
+| ------------- | ------------- | ------------- |
 |1    |eric |taiwan|
 |''   |''   |''|
 |'註解'|'註解'|''|
-```
 
+-----------------
 
 
 
@@ -63,11 +66,11 @@ or
 
 ### 1. 設定 service_account.json
 
-申請的 google spreadsheet api json 檔
+> 申請的 google spreadsheet api json 檔
 
 ### 2. 設定 datamap.yml
 
-#### 資料架構
+資料架構
 
 ```
 company:
@@ -78,21 +81,25 @@ company:
   export_dir: 'data'
   replace_keys:
     company_country: 'country'
+  replace_values:
+    '○': 1
+    '×': 0
 ```
 
-#### 架構說明
-company：  分頁名稱  
-filename： 產出的檔案名稱  
-first_key_x、first_key_y： 第一個 key 的 x、y 位置  
-  
-ex: A2 cell
-- first_key_x: 1
-- first_key_y: 2
+架構說明
+> 以上面的資料架構說明
 
+| 欄位  | 用途 |
+| ------------- | ------------- |
+| company  |  分頁名稱 |
+| filename  | 產出的檔案名稱  |
+| first_key_x  | 第一個 key X 位置，ex: A2 cell，first_key_x: 1 、 first_key_y: 2 |
+| first_key_y  | 第一個 key Y 位置 |
+| data_order  | 每筆資料排序，分為 ``'col'`` 或 `'row'` |
+| export_dir  | 匯出路徑 |
+| replace_keys  | 把 key 改成想要的，EX: company_country: 'country'， 會將 sheet 中的 `company_country` key 改成 `country` |
+| replace_values  | 變更特定內容，EX: '○': 1，會把 sheet 內容為 '○' 的欄位更改為 `1` |
 
-data_order: 每筆資料排序，分為 ``'col'`` 或 `'row'`  
-export_dir： 匯出路徑  
-replace_keys: 修改 key， EX: company_country: 'country'， 會將 sheet 中的 `company_country` key 改成 `country`
 
 ### 3. 使用方式
 
