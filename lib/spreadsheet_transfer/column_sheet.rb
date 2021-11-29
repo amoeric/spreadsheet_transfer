@@ -9,7 +9,11 @@ module SpreadsheetTransfer
     end
 
     def rows
-      raw_rows[@datamap['first_key_x']..-1]
+      return raw_rows[@datamap['first_key_x']..-1] unless has_replace_values?
+
+      raw_rows[@datamap['first_key_x']..-1].map do |row|
+        row.map { |r| replace_values.include?(r) ? replace_values[r] : r }
+      end
     end
 
     private

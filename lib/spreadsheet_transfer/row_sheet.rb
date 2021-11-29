@@ -18,7 +18,11 @@ module SpreadsheetTransfer
     end
 
     def rows
-      raw_rows[@datamap['first_key_y']..-1]
+      return raw_rows[@datamap['first_key_y']..-1] unless has_replace_values?
+
+      raw_rows[@datamap['first_key_y']..-1].map do |row|
+        row.map { |r| replace_values.include?(r) ? replace_values[r] : r }
+      end
     end
 
     def items
@@ -31,6 +35,12 @@ module SpreadsheetTransfer
       @datamap['replace_keys']
     end
 
+    def replace_values
+      return unless has_replace_values?
+
+      @datamap['replace_values']
+    end
+
     private
     def raw_rows
       @raw_rows ||= @worksheet.rows
@@ -38,6 +48,10 @@ module SpreadsheetTransfer
 
     def has_replace_keys?
       !@datamap['replace_keys'].nil?
+    end
+
+    def has_replace_values?
+      !@datamap['replace_values'].nil?
     end
   end
 end
