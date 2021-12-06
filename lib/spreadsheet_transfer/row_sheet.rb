@@ -21,7 +21,7 @@ module SpreadsheetTransfer
       return raw_rows[@datamap['first_key_y']..-1] unless has_replace_values?
 
       raw_rows[@datamap['first_key_y']..-1].map do |row|
-        row.map { |r| replace_values.include?(r) ? replace_values[r] : r }
+        row.map { |r| replace_values.include?(r.gsub(' ','')) ? replace_values[r] : r }
       end
     end
 
