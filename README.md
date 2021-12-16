@@ -81,9 +81,10 @@ company:
   export_dir: 'data'
   replace_keys:
     company_country: 'country'
-  replace_values:
-    '○': 1
-    '×': 0
+  replace_items:
+    img_name:
+      '-': 0
+      '○': 1
 ```
 
 架構說明
@@ -98,7 +99,7 @@ company:
 | data_order  | 每筆資料排序，分為 ``'col'`` 或 `'row'` |
 | export_dir  | 匯出路徑 |
 | replace_keys  | 把 key 改成想要的，EX: company_country: 'country'， 會將 sheet 中的 `company_country` key 改成 `country` |
-| replace_values  | 變更特定內容，EX: '○': 1，會把 sheet 內容為 '○' 的欄位更改為 `1` |
+| replace_items  | 變更指定欄位對應內容，EX: '○': 1，會把 img_name 內容為 '○' 的欄位更改為 `1` |
 
 
 ### 3. 使用方式
