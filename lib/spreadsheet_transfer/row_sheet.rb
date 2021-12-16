@@ -18,21 +18,19 @@ module SpreadsheetTransfer
     end
 
     def rows
-      return raw_rows[@datamap['first_key_y']..-1] unless has_replace_values?
-
-      raw_rows[@datamap['first_key_y']..-1].map do |row|
-        row.map do |r|
-          if r.empty?
-            r
-          else
-            replace_values.include?(r.gsub(' ','')) ? replace_values[r.gsub(' ','')] : r
-          end
-        end
-      end
+      raw_rows[@datamap['first_key_y']..-1]
     end
 
     def items
       @items ||= rows.map { |row| keys.zip(row).to_h }
+
+      @items.map do |item|
+        replace_items.each { |k, _|
+          replace_items[k].keys.include?(item[k]) ? item[k] = replace_items[k][item[k]] : item[k]
+        }
+      end
+
+      @items
     end
 
     def replace_keys
@@ -41,10 +39,10 @@ module SpreadsheetTransfer
       @datamap['replace_keys']
     end
 
-    def replace_values
-      return unless has_replace_values?
+    def replace_items
+      return unless has_replace_items?
 
-      @datamap['replace_values']
+      @datamap['replace_items']
     end
 
     private
@@ -56,8 +54,8 @@ module SpreadsheetTransfer
       !@datamap['replace_keys'].nil?
     end
 
-    def has_replace_values?
-      !@datamap['replace_values'].nil?
+    def has_replace_items?
+      !@datamap['replace_items'].nil?
     end
   end
 end
