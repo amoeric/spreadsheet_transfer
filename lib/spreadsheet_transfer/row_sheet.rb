@@ -24,6 +24,8 @@ module SpreadsheetTransfer
     def items
       @items ||= rows.map { |row| keys.zip(row).to_h }
 
+      return @items unless has_replace_items?
+
       @items.map do |item|
         replace_items.each { |k, _|
           replace_items[k].keys.include?(item[k]) ? item[k] = replace_items[k][item[k]] : item[k]
